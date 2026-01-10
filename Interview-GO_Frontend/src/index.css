@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 전체 폰트 및 배경 설정 */
+@layer base {
+  body {
+    font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+    
+    /* 위 config.js에서 만든 색상 적용 (@apply 사용) */
+    @apply bg-bg-base; 
+    
+    /* 글자색 (Slate 800) */
+    color: #1E293B; 
+  }
+}

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.interviewgo.mapper.ExamMapper">
+
+    <select id="getExamCount" resultType="int">
+        SELECT COUNT(*) 
+        FROM exam e
+        JOIN exam_language l ON e.ex_lang_uid = l.ex_lang_uid
+        <where>
+            <if test="lang != null and lang != '' and lang != '전체'">
+                AND l.ex_lang_name LIKE CONCAT('%', #{lang}, '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="getExamListWithPaging" resultType="exam">
+        SELECT 
+            e.ex_uid AS exUid,
+            e.ex_title AS exTitle,
+            e.ex_content AS exContent,
+            e.ex_level AS exLevel,
+            e.view_count AS viewCount,
+            l.ex_lang_name AS exLangName
+        FROM exam e
+        LEFT JOIN exam_language l ON e.ex_lang_uid = l.ex_lang_uid
+        <where>
+            <if test="lang != null and lang != '' and lang != '전체'">
+                AND (l.ex_lang_name LIKE CONCAT('%', #{lang}, '%') 
+                     OR #{lang} LIKE CONCAT('%', l.ex_lang_name, '%'))
+            </if>
+        </where>
+        ORDER BY e.ex_uid DESC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="getExamDetailByUid" resultType="exam">
+        SELECT 
+            ex_uid AS exUid,
+            ex_lang_uid AS exLangUid,  
+            ex_title AS exTitle,
+            ex_content AS exContent,
+            ex_level AS exLevel,
+            view_count AS viewCount,
+            ex_answer_list AS exAnswerList,
+            ex_answer_correct AS exAnswerCorrect
+        FROM exam
+        WHERE ex_uid = #{id}
+    </select>
+    
+    <update id="updateExamViewCount">
+        UPDATE exam 
+        SET view_count = IFNULL(view_count, 0) + 1 
+        WHERE
+         ex_uid = #{id}
+    </update>
+
+	<select id="selectExamHistory" parameterType="Long" resultType="examHistory">
+	    SELECT 
+	        h.hist_uid,
+	        h.mb_uid,
+	        h.ex_uid,
+	        h.hist_date,
+	        e.ex_title,
+			e.ex_level,
+			l.ex_lang_name    
+		FROM exam_history h
+	    	JOIN exam e ON h.ex_uid = e.ex_uid
+	    	LEFT JOIN exam_language l ON e.ex_lang_uid = l.ex_lang_uid
+	    WHERE h.mb_uid = #{mb_uid}
+	    ORDER BY h.hist_uid DESC
+	</select>
+	
+	<insert id="insertExamHistory">
+        INSERT INTO exam_history (mb_uid, ex_uid, ex_lang_uid)
+        VALUES (#{mb_uid}, #{ex_uid}, #{ex_lang_uid})
+    </insert>
+
+    <update id="incrementExamViewCount">
+        UPDATE exam
+		SET view_count = view_count + 1
+		WHERE ex_uid = #{ex_uid}
+    </update>
+    
+    <select id="checkExamHistoryExists">
+    	SELECT COUNT(*) FROM exam_history WHERE mb_uid = #{mb_uid} AND ex_uid = #{ex_uid}
+    </select>
+    
+    <delete id="deleteExamHistory" parameterType="Long">
+		DELETE FROM exam_history
+		WHERE mb_uid = #{mb_uid}
+	</delete>
+</mapper>

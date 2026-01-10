@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.interviewgo.mapper.MemberMapper">
+
+    <select id="getMemberByUsername" resultType="member">
+        SELECT *
+        FROM member
+        WHERE username = #{username}
+    </select>
+
+    <select id="countByUsername" parameterType="String" resultType="int">
+        SELECT COUNT(*) 
+        FROM member 
+        WHERE username = #{username}
+    </select>
+    
+    <select id="getMemberForPasswordReset" parameterType="member" resultType="member">
+	    SELECT 
+	        mb_uid, 
+	        username, 
+	        mb_pnumber
+	    FROM member
+	    WHERE username = #{username} 
+			AND mb_pnumber = #{mb_pnumber}
+	</select>
+
+    <insert id="insertMember" parameterType="member">
+		INSERT INTO member (
+			username,
+			mb_password,
+			mb_nickname,
+			mb_pnumber,
+			role,
+			mb_date,
+			mb_icon
+		)
+		VALUES (
+			#{username},
+			#{mb_password},
+			#{mb_nickname},
+			#{mb_pnumber},
+			#{role},
+			NOW(),
+			'/images/default.png'
+		)
+	</insert>
+
+	<update id="updatePasswordByUid" parameterType="member">
+		UPDATE member
+		SET mb_password = #{mb_password}
+		WHERE mb_uid = #{mb_uid}
+	</update>
+
+    <update id="updateMember" parameterType="memberUpdate">
+		UPDATE member
+		<set>
+			<if test="mb_password != null and mb_password != ''">
+				mb_password = #{mb_password},
+			</if>
+			<if test="mb_nickname != null and mb_nickname != ''">
+				mb_nickname = #{mb_nickname},
+			</if>
+			<if test="mb_pnumber != null and mb_pnumber != ''">
+				mb_pnumber = #{mb_pnumber},
+			</if>
+			<if test="mb_icon != null and mb_icon != ''">
+				mb_icon = #{mb_icon},
+			</if>
+		</set>
+		WHERE mb_uid = #{mb_uid}
+	</update>
+
+    <select id="selectPassword" parameterType="Long" resultType="string">
+		SELECT mb_password
+		FROM member
+		WHERE mb_uid = #{mb_uid}
+	</select>
+
+    <select id="getMemberByUid" resultType="member">
+        SELECT *
+        FROM member
+        WHERE mb_uid = #{mbUid}
+    </select>
+
+    <select id="checkNicknameDuplicate" resultType="int">
+		SELECT COUNT(*)
+		FROM member
+		WHERE mb_nickname = #{nickname}
+			AND mb_uid != #{mb_uid}
+	</select>
+
+	<delete id="deleteMember" parameterType="Long">
+		DELETE FROM member 
+		WHERE mb_uid = #{mb_uid}
+	</delete>
+</mapper>
