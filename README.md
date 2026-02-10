@@ -30,7 +30,7 @@
 | :--- | :--- |
 | **Language** | Java 21 |
 | **Framework** | Spring Boot 3.5.9 |
-| **ORM** | Spring Data JPA |
+| **Mapper** | MyBatis |
 | **Database** | MySQL 8.0 |
 | **Library** | Lombok 1.18.42 |
 
@@ -63,7 +63,7 @@
 ### ✅ Core Components
 1. **JDK 21**: 최신 자바 런타임 환경 구성
 2. **Spring Boot 3.5.9**: 비즈니스 로직 처리 및 REST API 서버 구축
-3. **Spring Data JPA**: DB 객체 매핑 및 효율적인 데이터 관리
+3. **MyBatis**: DB 객체 매핑 및 조작 기능
 4. **MySQL 8.0**: 회원 정보, 학습 기록, 피드백 데이터 저장소
 5. **React 19.2.3**: 사용자 중심의 컴포넌트 기반 UI 구축
 6. **Node.js 24.12.0**: 프론트엔드 빌드 및 실행 환경
